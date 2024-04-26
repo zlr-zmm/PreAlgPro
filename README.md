@@ -2,7 +2,7 @@
 
 PreAlgPro: A Neural Network Model for Allergenic Protein Identification through Pre-trained Protein Language Model 
 
-Linrong Zhang, Taigang Liu*
+Lingrong Zhang, Taigang Liu*
 
 College of Information Technology, Shanghai Ocean University, Shanghai 201306, China
 
