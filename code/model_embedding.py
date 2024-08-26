@@ -1,42 +1,63 @@
+from transformers import T5Tokenizer, T5EncoderModel, BertGenerationEncoder, BertTokenizer
 import torch
-import os
+import re
+import numpy as np
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+print("Using device: {}".format(device))
 
-from bio_embeddings.embed import ESM1bEmbedder, PLUSRNNEmbedder, BeplerEmbedder
+transformer_link = "../Pretrain/prot_t5_xl_half_uniref50-enc"
+print("Loading: {}".format(transformer_link))
+model = T5EncoderModel.from_pretrained(transformer_link)
+if device==torch.device("cuda"):
+  model.to(torch.float32) # only cast to full-precision if no GPU is available
+model = model.to(device)
+model = model.eval()
+tokenizer = T5Tokenizer.from_pretrained(transformer_link, do_lower_case=False, legacy=True )
 
-# CLS averaging processing function
-def getCls(vector):
-    vector = vector.mean(axis=0)
-    return vector
+def read(data_file):
+    label = []
+    sequence = []
+    with open(data_file, 'r') as file:
+        lines = file.readlines()
+        i = 0
+        for line in lines:
+            if line.startswith('>Positive'):
+                label.append(1)
+                li = lines[i+1].replace("\n","")
+                if (len(li) >= 1000):
+                    li = li[0:1000]
+                sequence.append(li)
+                i += 1
+            elif line.startswith('>Negative'):
+                label.append(0)
+                li = lines[i + 1].replace("\n", "")
+                if (len(li) >= 1000):
+                    li = li[0:1000]
+                sequence.append(li)
+                i += 1
+            else:
+                i += 1
+    return label, sequence
+data_file = "AP_Ind4.txt"
+label, sequence = read(data_file)
 
+import numpy as np
+i=0
+for seq in sequence:
+    print(i)
+    sequence_examples = [" ".join(list(re.sub(r"[UZOB]", "X", seq)))]
 
-# CLS data generation and writing functions
-def data_write(input_data, output_file_name, embedder):
-    k=0
-    for i in input_data:
-        print(k)
-        print(i[0])
-        k = k+1
-        embedding = embedder.embed(i[0])
-        cls = getCls(embedding)
-        # print(cls)
-        if not os.path.exists(output_file_name):
-            os.system(r"touch {}".format(output_file_name))
-        with open(output_file_name, 'a') as f:
-            a = []
-            for j in cls:
-                a.append(float(j))
-            f.write(str(a) + " ")
-            f.write("\n")
+    # tokenize sequences and pad up to the longest sequence in the batch
+    ids = tokenizer(sequence_examples, add_special_tokens=False, padding="longest")
 
-import pandas as pd
-# dataset reading
-path_to_train = "dataset/case_data.csv"
-path_to_train_cls1 = "dataset/Alg_real_Data_PLUSRNNEmbedder.csv"
-dataset_train = []
-train_datasets = pd.read_csv(path_to_train).iloc[:,:].values.tolist()
-print(len(train_datasets))
-data_write(train_datasets, path_to_train_cls1, PLUSRNNEmbedder())
-path_to_train_cls2 = "dataset/Alg_real_Data_ESM1bEmbedder.csv"
-data_write(train_datasets, path_to_train_cls2, ESM1bEmbedder())
-path_to_train_cls3 = "dataset/Alg_real_Data_BeplerEmbedder.csv"
-data_write(train_datasets, path_to_train_cls3, BeplerEmbedder())
+    input_ids = torch.tensor(ids['input_ids']).to(device)
+    attention_mask = torch.tensor(ids['attention_mask']).to(device)
+
+    # generate embeddings
+    with torch.no_grad():
+        embedding_repr = model(input_ids=input_ids, attention_mask=attention_mask)
+        emb_0 = embedding_repr.last_hidden_state[0, :len(sequence_examples[0])].mean(dim=0)
+        with open("embedding/ProtT5_Test4.csv",'a') as f:
+            np.savetxt(f, emb_0.cpu().numpy().reshape(1, -1) , delimiter=',')
+            torch.cuda.empty_cache()
+    i = i + 1
