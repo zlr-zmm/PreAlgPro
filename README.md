@@ -1,11 +1,39 @@
-# PreAlgPro
+# PreAlgPro Framework
 
-PreAlgPro: A Neural Network Model for Allergenic Protein Identification through Pre-trained Protein Language Model 
+This repository contains the code for the PreAlgPro framework, which is used for predicting allergenic protein. 
 
-Lingrong Zhang, Taigang Liu*
+PDNAPred relies on large-scale pre-trained protein language model: ProtT5. These models are implemented using Hugging Face's Transformers library and PyTorch. Please make sure to install the required dependencies beforehand.
 
-College of Information Technology, Shanghai Ocean University, Shanghai 201306, China
+- ProtT5: https://huggingface.co/Rostlab/prot_t5_xl_uniref50
 
-Abstract: Allergic reactions arise as a result of exposure to allergens, which have the potential to inflict harm on living organisms. Furthermore, allergies can influence individuals' preferences and utilization of various products, including food and pharmaceuticals. Therefore, it is essential to identify allergenic proteins accurately. In this study, we presented a novel deep learning model, termed PreAlgPro, to predict allergenic proteins based on pre-trained protein language models (PPLMs) and an attention-based convolutional neural network. First, we compared four popular PPLMs and adopted the best one to obtain the embedded features of allergenic proteins. Second, a deep learning architecture was constructed to perform the classification of allergenic proteins by combining the attention mechanism, the convolutional neural network with residual connection, and the fully connected layers. Third, we applied the 5-fold cross-validation and the independent set test to verify the effectiveness of PreAlgPro on the benchmark datasets. Finally, we conducted a case analysis to ascertain the robustness of the model. Based on the same independent test set, PreAlgPro showcased satisfactory performance, with an accuracy of 98.94% and a recall of 98.03%. Our model achieved an overall precision of 99.86%, exhibiting an improvement of 6.55% to 14.72% compared to the existing state-of-the-art predictors. This indicated that PreAlgPro could serve as an efficient method for the allergenic protein identification. 
+# Usage
 
-Keywords: pre-trained protein language model; allergenic protein; deep learning; attention mechanism
+First, you need to download the model weights for ProtT5 from the provided Hugging Face URLs. Please visit the above links to download the respective weight files.
+
+Save the downloaded weight files in your working directory and make sure you know their exact paths.
+
+Next, you will use the provided `model_embedding.py scripts to generate embedding features for ProtT5 , respectively. In these scripts, you need to modify the file paths according to your needs.
+
+For the `model_embedding.py` scripts, you need to run them separately to generate embedding features for ProtT5 . Run the following commands:
+
+```
+python model_embedding.py
+```
+
+This will generate the corresponding embedding features files.
+
+Finally, you can proceed with model training and validation using the provided `train.py` script. Before running it, make sure you have prepared the training data and labels, and have downloaded the weight files and generated embedding feature files.
+
+In the `train.py` script, you need to modify the file paths and other parameters according to your needs. Run the following command to start the model training and validation:
+
+```
+python train.py
+```
+
+The script will train the model and perform validation based on the data and parameters you provided, and it will save the output in the specified output directory.
+
+Please note that the file paths and other parameters in the above steps need to be modified according to your own setup. Make sure you have installed the required dependencies properly, and follow the steps in the specified order.
+
+# Contact
+
+If you have any questions regarding the code, paper, or data, please feel free to contact Lingrong Zhang at [zlr_zmm@163.com](mailto:zlr_zmm@163.com).
