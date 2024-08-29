@@ -39,3 +39,7 @@ Please note that the file paths and other parameters in the above steps need to 
 In addition, we also provide Colab code, here is the code link: https://colab.research.google.com/drive/1aCgZbvrLxTuBaXPdzFfvyVWfIUJacv5K?usp=sharing
 
 If you have any questions regarding the code, paper, or data, please feel free to contact Lingrong Zhang at [zlr_zmm@163.com](mailto:zlr_zmm@163.com).
+
+# Acknowledge
+The training and test sets come from DeepAlgPro (DOI: https://doi.org/10.1093/bib/bbad246)
+The three independent test sets come from SEP-AlgPro (DOI: https://doi.org/10.1016/j.ijbiomac.2024.133085)
