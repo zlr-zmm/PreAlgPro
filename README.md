@@ -3,6 +3,7 @@
 This repository contains the code for the PreAlgPro framework, which is used for predicting allergenic protein. 
 
 PDNAPred relies on large-scale pre-trained protein language model: ProtT5. These models are implemented using Hugging Face's Transformers library and PyTorch. Please make sure to install the required dependencies beforehand.
+The data can be found in: https://drive.google.com/drive/folders/14qfr-NCPeQebTgh99f_9gVFAPV1F5F9f?usp=sharing
 
 - ProtT5: https://huggingface.co/Rostlab/prot_t5_xl_uniref50
 
